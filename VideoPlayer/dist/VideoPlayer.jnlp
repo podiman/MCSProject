@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<jnlp spec="1.0" xmlns:jfx="http://javafx.com" href="VideoPlayer.jnlp">
+  <information>
+    <title>VideoPlayer</title>
+    <vendor>mayurawijeyaratne</vendor>
+    <description>null</description>
+    <offline-allowed/>
+  </information>
+  <resources>
+    <j2se version="1.6+" href="http://java.sun.com/products/autodl/j2se"/>
+    <jar href="VideoPlayer.jar" size="8584" download="eager" />
+    <jar href="lib/FaceSDK.jar" size="57525" download="eager" />
+    <jar href="lib/commons-math3-3.5.jar" size="2038489" download="eager" />
+    <jar href="lib/jna.jar" size="865400" download="eager" />
+    <jar href="lib/jython.jar" size="28120290" download="eager" />
+    <jar href="lib/py4j0.9.jar" size="108826" download="eager" />
+    <jar href="lib/xuggle-xuggler.jar" size="364190" download="eager" />
+  </resources>
+  <applet-desc  width="800" height="600" main-class="com.javafx.main.NoJavaFXFallback"  name="VideoPlayer" >
+    <param name="requiredFXVersion" value="8.0+"/>
+  </applet-desc>
+  <jfx:javafx-desc  width="800" height="600" main-class="videoplayer.VideoPlayer"  name="VideoPlayer" />
+  <update check="always"/>
+</jnlp>

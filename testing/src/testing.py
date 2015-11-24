@@ -11,6 +11,7 @@ import scipy.spatial as scsp
 from pandas import DataFrame
 from sklearn.cluster import KMeans
 import scipy.sparse as sps
+from sklearn.datasets import make_blobs
 
 def leastSq(x,y):
         A = np.vstack([x, np.ones(len(x))]).T
@@ -45,12 +46,7 @@ def DistEyesEyebrows(points, lN):
     return distEyes
 
 def areaOfTriangle(point1, point2, point3):
-    eucDis1 = scsp.distance.cdist(point1, point2, 'euclidean')
-    eucDis2 = scsp.distance.cdist(point2, point3, 'euclidean')
-    eucDis3 = scsp.distance.cdist(point1, point3, 'euclidean')
-    s = (eucDis1 + eucDis2 + eucDis3) / 2
-    area = (s*(s-eucDis1)*(s-eucDis2)*(s-eucDis3)) ** 0.5
-#    print round(area,2)
+    area = abs((point1[0][0]*(point2[0][1]-point3[0][1]) + point2[0][0]*(point3[0][1]-point1[0][1]) + point3[0][0]*(point1[0][1]-point2[0][1])) / 2)
     return area
     
 def areaBetweenEyes(point5, point6, point16, point15, lN):
@@ -73,7 +69,6 @@ def areaOfEyes(point11,point12,point13,point14,point15,point23,point22,point21,p
     
     areaLeftEye = areaofOctogon(point11,point12,point13,point14,point15,point23,point22,point21)
     areaRightEye = areaofOctogon(point16,point17,point18,point19,point20,point26,point25,point24)
-    
     areaEyesBoth = (areaLeftEye + areaRightEye) * (1/lN**2)
     return areaEyesBoth
 
@@ -136,6 +131,7 @@ def main():
     points = []
     dfGroupPoints = []
     rows_list = []
+    rows_list2 = []
     df1 = DataFrame(columns=('1', '2','3','4','5','6','7','8','9','10','11'))
     for row, frame in dfGroups[1].iterrows():
         points.append([[frame.FeatureXAxis,frame.FeatureYAxis]])
@@ -163,7 +159,7 @@ def main():
         point14 = dfGroupPoints[36]
         point15 = dfGroupPoints[24]
         point16 = dfGroupPoints[25]
-        point17 = dfGroupPoints[30]
+        point17 = dfGroupPoints[39]
         point18 = dfGroupPoints[32]
         point19 = dfGroupPoints[40]
         point20 = dfGroupPoints[26]
@@ -182,7 +178,7 @@ def main():
         point33 = dfGroupPoints[57]
         point34 = dfGroupPoints[59]
         point35 = dfGroupPoints[55]
-        point36 = dfGroupPoints[35]
+        point36 = dfGroupPoints[58]
         point37 = dfGroupPoints[60]
         point38 = dfGroupPoints[61]
         point39 = dfGroupPoints[62]
@@ -228,12 +224,13 @@ def main():
         feature11 = lN
         
 #        dict1.update([feature1,feature2,feature3,feature4,feature5,feature6,feature7,feature8,feature9,feature10,feature11])
-#        df1.loc[index] = [feature1,feature2,feature3,feature4,feature5,feature6,feature7,feature8,feature9,feature10,feature11]
+        df1.loc[index] = [feature1,feature2,feature3,feature4,feature5,feature6,feature7,feature8,feature9,feature10,feature11]
         rows_list.append([feature1,feature2,feature3,feature4,feature5,feature6,feature7,feature8,feature9,feature10,feature11])
+        rows_list2.append([feature1,feature2,feature3,feature4])
 #        print feature1.dtype
 #        print feature2.dtype
 #        print feature3.dtype
-#        print feature4.dtype
+#        print feature4
 #        print feature5.dtype
 #        print feature6.dtype
 #        print feature7.dtype
@@ -243,7 +240,10 @@ def main():
 #        print feature11.dtype
     
     rows_list_float = np.array(rows_list, dtype=float)
-    print rows_list_float
+    rows_list_float.astype(np.float64)
+#    print df1
+    mat = df1.as_matrix()
+#    print rows_list_float[1]
 #    print df1
 #    print rows_list
 #    y_pred = KMeans(n_clusters=2).fit_predict(rows_list)
@@ -260,7 +260,11 @@ def main():
 #        
 ##    print sps_acc
 #    
-    y_pred = KMeans(n_clusters=2).fit_predict(rows_list_float)
+    n_samples = 1500
+    random_state = 170
+    X, y = make_blobs(n_samples=n_samples, random_state=random_state)
+#    print X[1]
+    y_pred = KMeans(n_clusters=3).fit_predict(rows_list_float)
     print y_pred
     
     print "Finished"

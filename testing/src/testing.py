@@ -10,34 +10,22 @@ import numpy as np
 import scipy.spatial as scsp
 from pandas import DataFrame
 from sklearn.cluster import KMeans
-import scipy.sparse as sps
-from sklearn.datasets import make_blobs
 
 def leastSq(x,y):
         A = np.vstack([x, np.ones(len(x))]).T
         m, c = np.linalg.lstsq(A, y)[0]
         return m
     
-def GradEyes(x,y,x1,y1):
+def gradEyes(x,y,x1,y1):
     leftEye = leastSq(x,y)
     rightEye = leastSq(x1,y1)
     return (leftEye-rightEye)/2
-
-#def DistEyesEyebrows(points, lN):
-#    totalEucDis = 0
-#    print len(points)
-#    for i in range(len(points)-10):
-#        eucDis = scsp.distance.cdist(points[i], points[i+10], 'euclidean')
-#        totalEucDis += eucDis
-#    print totalEucDis
-#    distEyes = totalEucDis/10*lN
-#    return distEyes
 
 def normalizeFactor(point27, point28):
     norFac = scsp.distance.cdist(point27, point28, 'euclidean')
     return norFac
 
-def DistEyesEyebrows(points, lN):
+def distEyesEyebrows(points, lN):
     totalEucDis = 0
     for i in range(len(points)-10):
         eucDis = scsp.distance.cdist(points[i], points[i+10], 'euclidean')
@@ -72,7 +60,7 @@ def areaOfEyes(point11,point12,point13,point14,point15,point23,point22,point21,p
     areaEyesBoth = (areaLeftEye + areaRightEye) * (1/lN**2)
     return areaEyesBoth
 
-def VTHRofEyes(point22,point13,point15,point11,point25,point18,point20,point16):
+def vTHRofEyes(point22,point13,point15,point11,point25,point18,point20,point16):
     distance1 = scsp.distance.cdist(point22, point13, 'euclidean')
     distance2 = scsp.distance.cdist(point15, point11, 'euclidean')
     distance3 = scsp.distance.cdist(point25, point18, 'euclidean')
@@ -88,13 +76,13 @@ def areaCircumOfMouth(point1,point2,point3,point4,point5,point6,point7,point8,lN
     feature6 = area / lN**2
     return feature6
 
-def VTHRofCircMouth(p1,p2,p3,p4):
+def vTHRofCircMouth(p1,p2,p3,p4):
     distance1 = scsp.distance.cdist(p1, p2, 'euclidean')
     distance2 = scsp.distance.cdist(p3, p4, 'euclidean')
     f8 = np.arctan(distance1/distance2)
     return f8
 
-def VposOfMouth(p29,p30,p31,p32,p33,p34,p35,p36,p37,p38,p39,p40,p41,p42,lN):
+def vposOfMouth(p29,p30,p31,p32,p33,p34,p35,p36,p37,p38,p39,p40,p41,p42,lN):
     a1 = np.array([p29[0][1],p30[0][1]])
     a2 = np.array([p31[0][1],p32[0][1],p33[0][1],p34[0][1],p35[0][1],p36[0][1],p37[0][1],p38[0][1],p39[0][1],p40[0][1],p41[0][1],p42[0][1]])
     f10 = (1/lN) * (np.mean(a1)-np.mean(a2))
@@ -124,25 +112,19 @@ def main():
 #        print dfGroup
     
 #    print len(dfGroups[1])
-    xarray = []
-    yarray = []
-    x1array = []
-    y1array = []
-    points = []
+
+#    points = []
     dfGroupPoints = []
     rows_list = []
-    rows_list2 = []
     df1 = DataFrame(columns=('1', '2','3','4','5','6','7','8','9','10','11'))
-    for row, frame in dfGroups[1].iterrows():
-        points.append([[frame.FeatureXAxis,frame.FeatureYAxis]])
-        
+
     for index in range(len(dfGroups)):
+#    for index in range(2):
         dfGroupPoints = []
-        dict1 = {}
-        df_new = DataFrame()
         for row, frame in dfGroups[index].iterrows():
             dfGroupPoints.append([[frame.FeatureXAxis,frame.FeatureYAxis]])
-#        print len(dfGroupPoints)
+        print "Index No= " + str(index) + "        Frame Number: " + str(frame.FrameNumber)
+#        print dfGroupPoints
         point1 = dfGroupPoints[12]
         point2 = dfGroupPoints[18]
         point3 = dfGroupPoints[16]
@@ -185,6 +167,7 @@ def main():
         point40 = dfGroupPoints[65]
         point41 = dfGroupPoints[64]
         point42 = dfGroupPoints[63]
+        
         x = [point12[0][0], point18[0][0], point16[0][0], point19[0][0], point13[0][0]]
         y = [point12[0][1], point18[0][1], point16[0][1], point19[0][1], point13[0][1]]
 
@@ -197,9 +180,7 @@ def main():
 
         lN = normalizeFactor(point27,point28)
         points1to20 = [point1,point2,point3,point4,point5,point6,point7,point8,point9,point10,point11,point12,point13,point14,point15,point16,point17,point18,point19,point20]
-#        for i in range(0,20):
-#            points1to20.append(dfGroupPoints[i])
-            
+
 #        print "Normalizing Factor = " +  str(lN)
         
 #        print "Distance between eyebrows and eyes = " + str(feature2(points1to20, lN))
@@ -211,61 +192,65 @@ def main():
 #        print "Vertical to Horizontal ration of mouth = " + str(VTHRofCircMouth(point1,point2,point3,point4))
 #        print "Vertical position of the corner of the mouth = " + str(VposOfMouth(point29,point30,point31,point32,point33,point34,point35,point36,point37,point38,point39,point40,point41,point42,lN))
     
-        feature1 = GradEyes(x,y,x1,y1)
-        feature2 = DistEyesEyebrows(points1to20, lN)
+        feature1 = gradEyes(x,y,x1,y1)
+        feature2 = distEyesEyebrows(points1to20, lN)
         feature3 = areaBetweenEyes(point5,point6,point15,point16,lN)
         feature4 = areaOfEyes(point11,point12,point13,point14,point15,point23,point22,point21,point16,point17,point18,point19,point20,point26,point25,point24,lN)
-        feature5 = VTHRofEyes(point22,point13,point15,point11,point25,point18,point20,point16)
+        feature5 = vTHRofEyes(point22,point13,point15,point11,point25,point18,point20,point16)
         feature6 = areaCircumOfMouth(point29,point31,point32,point33,point30,point34,point35,point36,lN)
         feature7 = areaCircumOfMouth(point29,point37,point38,point39,point30,point40,point41,point42,lN)
-        feature8 = VTHRofCircMouth(point35,point32,point30,point29)
-        feature9 = VTHRofCircMouth(point41,point38,point30,point29)
-        feature10 = VposOfMouth(point29,point30,point31,point32,point33,point34,point35,point36,point37,point38,point39,point40,point41,point42,lN)
+        feature8 = vTHRofCircMouth(point35,point32,point30,point29)
+        feature9 = vTHRofCircMouth(point41,point38,point30,point29)
+        feature10 = vposOfMouth(point29,point30,point31,point32,point33,point34,point35,point36,point37,point38,point39,point40,point41,point42,lN)
         feature11 = lN
         
-#        dict1.update([feature1,feature2,feature3,feature4,feature5,feature6,feature7,feature8,feature9,feature10,feature11])
         df1.loc[index] = [feature1,feature2,feature3,feature4,feature5,feature6,feature7,feature8,feature9,feature10,feature11]
         rows_list.append([feature1,feature2,feature3,feature4,feature5,feature6,feature7,feature8,feature9,feature10,feature11])
-        rows_list2.append([feature1,feature2,feature3,feature4])
-#        print feature1.dtype
-#        print feature2.dtype
-#        print feature3.dtype
-#        print feature4
-#        print feature5.dtype
-#        print feature6.dtype
-#        print feature7.dtype
-#        print feature8.dtype
-#        print feature9.dtype
-#        print feature10.dtype
-#        print feature11.dtype
     
     rows_list_float = np.array(rows_list, dtype=float)
-    rows_list_float.astype(np.float64)
-#    print df1
-    mat = df1.as_matrix()
-#    print rows_list_float[1]
-#    print df1
-#    print rows_list
-#    y_pred = KMeans(n_clusters=2).fit_predict(rows_list)
+
+#    y_pred = KMeans(n_clusters=3).fit_predict(df1)
 #    print y_pred
+
+#    print y_pred.cluster_centers_ 
+
+    a = 0
+    x = 0
+    y = 0
+    z = 0
+#    j = 0
+#    for i in range(len(y_pred)):
+#        if y_pred[i] == 0:
+#            x += 1
+#        if y_pred[i] == 1:
+#            y += 1
+##            print i
+##            print df1.iloc[[i]]
+#        if y_pred[i] == 2:
+#            z += 1
+##            print i
+##            print df1.iloc[[i]]
+#    print x
+#    print y
+#    print z
     
-#    shape = (5, 2)
-#    rows, cols = 5, 2
-#    sps_acc = sps.coo_matrix((rows, cols)) # empty matrix
-#    for j in xrange(100): # add 100 sets of 100 1's
-#        r = np.random.randint(rows, size=100)
-#        c = np.random.randint(cols, size=100)
-#        d = np.ones((100,))
-#        sps_acc = sps_acc + sps.coo_matrix((d, (r, c)), shape=(rows, cols))
-#        
-##    print sps_acc
-#    
-    n_samples = 1500
-    random_state = 170
-    X, y = make_blobs(n_samples=n_samples, random_state=random_state)
-#    print X[1]
-    y_pred = KMeans(n_clusters=3).fit_predict(rows_list_float)
-    print y_pred
+    x_pred = KMeans(n_clusters=4).fit_predict(df1)
+    
+    for i in range(len(x_pred)):
+        if x_pred[i] == 0:
+            x += 1
+        if x_pred[i] == 1:
+            y += 1
+            print i
+#            print df1.iloc[[i]]
+        if x_pred[i] == 2:
+            z += 1
+        if x_pred[i] == 2:
+            a += 1
+#    print a
+#    print x
+#    print y
+#    print z
     
     print "Finished"
 

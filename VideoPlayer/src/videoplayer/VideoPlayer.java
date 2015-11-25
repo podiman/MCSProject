@@ -114,7 +114,7 @@ public class VideoPlayer extends Application {
 
         stage.setScene(new Scene(root, 960, 540));
         stage.setFullScreen(true);
-        stage.setTitle("something else");
+        stage.setTitle("Video Player");
 
         stage.show();
         mp.play();

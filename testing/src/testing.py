@@ -10,6 +10,7 @@ import numpy as np
 import scipy.spatial as scsp
 from pandas import DataFrame
 from sklearn.cluster import KMeans
+from sklearn import preprocessing
 
 def leastSq(x,y):
         A = np.vstack([x, np.ones(len(x))]).T
@@ -116,7 +117,7 @@ def main():
 #    points = []
     dfGroupPoints = []
     rows_list = []
-    df1 = DataFrame(columns=('1', '2','3','4','5','6','7','8','9','10','11'))
+    df1 = DataFrame(columns=('1', '2','3','4','5','6','7','8','9','10'))
 
     for index in range(len(dfGroups)):
 #    for index in range(2):
@@ -202,10 +203,10 @@ def main():
         feature8 = vTHRofCircMouth(point35,point32,point30,point29)
         feature9 = vTHRofCircMouth(point41,point38,point30,point29)
         feature10 = vposOfMouth(point29,point30,point31,point32,point33,point34,point35,point36,point37,point38,point39,point40,point41,point42,lN)
-        feature11 = lN
+#        feature11 = lN
         
-        df1.loc[index] = [feature1,feature2,feature3,feature4,feature5,feature6,feature7,feature8,feature9,feature10,feature11]
-        rows_list.append([feature1,feature2,feature3,feature4,feature5,feature6,feature7,feature8,feature9,feature10,feature11])
+        df1.loc[index] = [feature1,feature2,feature3,feature4,feature5,feature6,feature7,feature8,feature9,feature10]
+        rows_list.append([feature1,feature2,feature3,feature4,feature5,feature6,feature7,feature8,feature9,feature10])
     
     rows_list_float = np.array(rows_list, dtype=float)
 
@@ -233,12 +234,20 @@ def main():
 #    print x
 #    print y
 #    print z
-    
-    x_pred = KMeans(n_clusters=4).fit_predict(df1)
+#    print df1
+
+    min_max_scaler = preprocessing.MinMaxScaler()
+    df1_normalize = min_max_scaler.fit_transform(df1)
+    df1_new = df1_normalize[0:100]
+    print df1_new
+#    print df1_normalize
+#    x_pred = min_max_scaler.fit_predict(df1)
+    x_pred = KMeans(n_clusters=2).fit_predict(df1_new)
     
     for i in range(len(x_pred)):
         if x_pred[i] == 0:
             x += 1
+#            print i
         if x_pred[i] == 1:
             y += 1
             print i
@@ -248,8 +257,8 @@ def main():
         if x_pred[i] == 2:
             a += 1
 #    print a
-#    print x
-#    print y
+    print x
+    print y
 #    print z
     
     print "Finished"
